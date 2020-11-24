@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.TextView
+import com.cm.android.legends.models.PostsAdapter
 import com.cm.android.legends.posts.api.PostApi
 import com.cm.android.legends.posts.models.Post
 import com.google.gson.GsonBuilder
@@ -58,15 +60,18 @@ class ThirdFragment : Fragment() {
 
         var postApi=retrofit.create(PostApi::class.java)
         var postCall=postApi.posts
-        postCall.enqueue(object : Callback<Post>{
-            override fun onFailure(call: Call<Post>, t: Throwable) {
+
+        postCall.enqueue(object : Callback<List<Post>>{
+            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                 Log.d("ThirdFragment","Error with API")
             }
 
-            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                var title = response.body()!!.title
-                Log.d("ThirdFragment","Title is "+title)
-                view.findViewById<TextView>(R.id.title).text=title
+            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+
+                var title = response.body()!!
+                var listView = view.findViewById<ListView>(R.id.titles)
+                var adapter = PostsAdapter(requireActivity(), title as ArrayList<Post>)
+                listView.adapter = adapter
 
             }
 
